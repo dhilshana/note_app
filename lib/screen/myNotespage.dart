@@ -3,11 +3,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:noteapp/providers/noteProvider.dart';
 import 'package:noteapp/screen/addingNotespage.dart';
-import 'package:noteapp/screen/controller.dart';
-import 'package:noteapp/screen/notepage.dart';
+
 import 'package:noteapp/utils/constants.dart';
 import 'package:noteapp/widgets/customCard.dart';
+import 'package:provider/provider.dart';
 
 class MyNotesPage extends StatefulWidget {
   String? title;
@@ -34,10 +35,12 @@ class _MyNotesPageState extends State<MyNotesPage> {
   Widget build(BuildContext context) {
 
 
-    final  impList =  notes.where((element) => element['isMarked']==true,).toList();
    
 
+    final provider = context.watch<NoteProvider>();
 
+     final  impList =  provider.notes.where((element) => element['isMarked']==true,).toList();
+   
 
     return SafeArea(
       child: Scaffold(
@@ -138,12 +141,12 @@ class _MyNotesPageState extends State<MyNotesPage> {
                       ):
 
                     ListView.builder(
-                          itemCount: notes.isNotEmpty ? notes.length : 1,
+                          itemCount: provider.notes.isNotEmpty ? provider.notes.length : 1,
                           itemBuilder: (context, index) {
 
                            
-                            if (notes.isNotEmpty) {
-                              final note = notes[index];
+                            if (provider.notes.isNotEmpty) {
+                              final note = provider.notes[index];
 
                                   
                               return CustomCard(note: note,impNote: impList,index: index,onReload: reload);
@@ -162,17 +165,7 @@ class _MyNotesPageState extends State<MyNotesPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddingNotesPage()))
-                .then((value) {
-              if (value != null) {
-                setState(() {
-                  notes.add(value);
-                });
-                print(value);
-                print(notes.length);
-                
-              }
-            });
+                    MaterialPageRoute(builder: (context) => AddingNotesPage()));
           },
           backgroundColor: Colors.white70,
           shape: StadiumBorder(),

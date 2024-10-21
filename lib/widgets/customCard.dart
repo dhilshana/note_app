@@ -34,6 +34,7 @@ class _CustomCardState extends State<CustomCard> {
                       title: widget.note['title'],
                       desc: widget.note['description'],
                       imagePath: widget.note['image'],
+                      index: widget.index,
                     ))).then((updatedNote) {
                       widget.onReload!();
           if (updatedNote != null) {

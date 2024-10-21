@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:noteapp/main.dart';
+import 'package:noteapp/providers/noteProvider.dart';
 import 'package:noteapp/screen/myNotespage.dart';
+import 'package:provider/provider.dart';
 
 class AddingNotesPage extends StatefulWidget {
   const AddingNotesPage({super.key});
@@ -82,7 +85,9 @@ final ImagePicker _picker = ImagePicker(); // Initialize the ImagePicker
                 String title = titleController.text;
                 String desc = descController.text;
                 if(title.isNotEmpty && desc.isNotEmpty) {
-                  Navigator.pop(context, {'title':title,'description':desc,'image':image?.path,'isMarked':false});
+                  context.read<NoteProvider>().addNotes({'title':title,'description':desc,'image':image?.path,'isMarked':false});
+                  Navigator.pop(context);
+                  
                 } else {
               
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('You should give the title and description')));

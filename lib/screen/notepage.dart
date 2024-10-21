@@ -1,18 +1,29 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:noteapp/providers/noteProvider.dart';
 import 'package:noteapp/screen/controller.dart';
+import 'package:provider/provider.dart';
 
 class NotePage extends StatelessWidget {
   String title;
   String desc;
   String? imagePath;
+  int? index;
   
-  NotePage({super.key, required this.title, required this.desc, this.imagePath});
+  NotePage({super.key, required this.title, required this.desc, this.imagePath,required this.index});
 
   @override
   Widget build(BuildContext context) {
     TextEditingController titleController = TextEditingController(text: title);
     TextEditingController descController = TextEditingController(text: desc);
+
+    
+
+    final provider = context.watch<NoteProvider>();
+
+    
+
+
     
     return SafeArea(
       child: Scaffold(
@@ -28,12 +39,7 @@ class NotePage extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      Navigator.pop(context, {
-                        'title': title,
-                        'description': desc,
-                        'isMarked': false,
-                        'image': imagePath,
-                      });
+                      Navigator.pop(context, );
                     },
                   ),
                   Row(
@@ -68,8 +74,9 @@ class NotePage extends StatelessWidget {
                                   TextButton(
                                     onPressed: () {
                                       // Update title and description
-                                      title = titleController.text;
-                                      desc = descController.text;
+                                     String newTitle = titleController.text;
+                                     String  newDesc = descController.text;
+                                      context.read<NoteProvider>().updateNote(value: {'title':newTitle,'description':newDesc,'isMarked':false},oldvalue:{'title':title,'description':desc} );
                                       Navigator.pop(context);
                                     },
                                     child: Text("OK"),
@@ -89,17 +96,8 @@ class NotePage extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.delete_outlined),
                         onPressed: () {
-                          var noteToRemove = notes.firstWhere(
-                            (note) =>
-                                note['title'] == title &&
-                                note['description'] == desc,
-                          );
+                         context.read<NoteProvider>().removeNote({'title':title,'description':desc});
 
-                          if (noteToRemove != null) {
-                            notes.remove(noteToRemove);
-                          }
-
-                          print(notes); // To verify that the note is removed
                           Navigator.pop(context);
                         },
                       ),
@@ -124,11 +122,11 @@ class NotePage extends StatelessWidget {
               ),
               SizedBox(height: 30),
               Text(
-                title,
+                provider.notes[index!]['title'],
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 10),
-              Text(desc),
+              Text(provider.notes[index!]['description']),
             ],
           ),
         ),
